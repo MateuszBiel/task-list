@@ -1,0 +1,32 @@
+{
+  "name": "task-list",
+  "version": "1.0.0",
+  "description": "",
+  "main": "server.js",
+  "scripts": {
+    "test": "gulp test",
+    "start": "gulp default"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "body-parser": "~1.0.1",
+    "browser-sync": "^2.11.0",
+    "express": "^4.0.0",
+    "gulp": "^3.9.0",
+    "jasmine-core": "^2.4.1",
+    "karma": "^0.13.19",
+    "karma-jasmine": "^0.3.6",
+    "karma-phantomjs-launcher": "^0.2.3",
+    "mongoose": "~3.6.13",
+    "phantomjs": "^1.9.19"
+  },
+  "devDependencies": {
+    "angular": "^1.4.8",
+    "gulp-typescript": "^2.10.0",
+    "karma-chrome-launcher": "^0.2.2",
+    "karma-firefox-launcher": "^0.1.7",
+    "karma-opera-launcher": "^0.3.0",
+    "normalize.css": "^3.0.3"
+  }
+}
