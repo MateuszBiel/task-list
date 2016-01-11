@@ -1,47 +1,68 @@
-var gulp        = require('gulp');
+var gulp = require('gulp');
 var browserSync = require('browser-sync').create();
-var sass        = require('gulp-sass');
-var ts = require('gulp-typescript');
-var tsProject = ts.createProject('tsconfig.json', { sortOutput: true });
+var sass = require('gulp-sass');
+var    exec = require('child_process').exec;
+var connect = require('gulp-connect');
+var autoprefixer = require('gulp-autoprefixer');
 
 /**
  * Run test once and exit
  */
-gulp.task('test', function (done) {
-  new Server({
-    configFile: __dirname + '/karma.conf.js',
-    singleRun: false
-  }, done).start();
+gulp.task('test', function(done) {
+    new Server({
+        configFile: __dirname + '/karma.conf.js',
+        singleRun: false
+    }, done).start();
 });
 
-
-
-// Static Server + watching scss/html files
-gulp.task('serve', ['sass'], function() {
-
-    browserSync.init({
-        server: ""
-    });
-
-    gulp.watch("app/sass/*.scss", ['sass']);
-    gulp.watch("*.html").on('change', browserSync.reload);
-});
+gulp.task('server', function (cb) {
+  exec('node ./server.js', function (err, stdout, stderr) {
+    console.log(stdout);
+    console.log(stderr);
+    cb(err);
+  });
+  exec('mongod --dbpath ./data', function (err, stdout, stderr) {
+    console.log(stdout);
+    console.log(stderr);
+    cb(err);
+  });
+})
 
 // Compile sass into CSS & auto-inject into browsers
 gulp.task('sass', function() {
-    return gulp.src("app/sass/*.scss")
+    return gulp.src("public/sass/*.scss")
         .pipe(sass())
-        .pipe(gulp.dest("app/css"))
-        .pipe(browserSync.stream());
+        .pipe(gulp.dest("public/css"));
 });
 
-// gulp.task('tsChecker', function () {
-//         var tsResult = tsProject.src() // instead of gulp.src(...) 
-//         .pipe(ts(tsProject));
-    
-//     return tsResult.js.pipe(gulp.dest(''))
-//         .pipe(browserSync.stream());
-// // });
+gulp.task('connect', function(){
+    connect.server({
+        livereload: true,
+        port: 8080
+    });
+});
 
-// gulp.task('default', ['serve','tsChecker']);
-gulp.task('default', ['serve']);
+gulp.task('reload', function(){
+    gulp.src('./public/**/*.*')
+    .pipe(connect.reload());
+});
+
+
+gulp.task('default', function () {
+    return gulp.src('public/css/*.css')
+        .pipe(autoprefixer({
+            browsers: ['last 2 versions'],
+            cascade: false
+        }))
+        .pipe(gulp.dest(''));
+});
+
+
+gulp.task('watch',function(){
+    gulp.watch("public/sass/*.scss", ['sass']);
+    gulp.watch(['public/scripts/*.js'], ['reload']);
+    gulp.watch(['public/css/*.css'], ['reload']);
+})
+
+gulp.task('default', ['sass', 'server', 'watch']);
+

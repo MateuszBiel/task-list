@@ -19,10 +19,16 @@
     "karma-jasmine": "^0.3.6",
     "karma-phantomjs-launcher": "^0.2.3",
     "mongoose": "~3.6.13",
-    "phantomjs": "^1.9.19"
+    "phantomjs": "^1.9.19",
+    "socket.io": "^1.4.4",
+    "morgan": "~1.2.2",
+    "method-override": "~2.1.2"
   },
   "devDependencies": {
     "angular": "^1.4.8",
+    "gulp-autoprefixer": "^3.1.0",
+    "gulp-connect": "^2.3.1",
+    "gulp-traceur": "^0.17.2",
     "gulp-typescript": "^2.10.0",
     "karma-chrome-launcher": "^0.2.2",
     "karma-firefox-launcher": "^0.1.7",
