@@ -1,17 +1,17 @@
 $main-background-color: #eeeeee;
-$input-font-size :130%;
-
-*{
-    box-sizing:border-box;
+$input-font-size:130%;
+* {
+    box-sizing: border-box;
 }
 
 body {
     background-color: $main-background-color;
 }
 
-div{
-    margin-bottom:20px
+div {
+    margin-bottom: 20px
 }
+
 .datepickerdemoBasicUsage {
     /** Demo styles for mdCalendar. */
     md-content {
@@ -26,7 +26,6 @@ div{
 
 .container {
     margin: auto;
-   
 }
 
 #app-name {
@@ -36,56 +35,125 @@ div{
     box-shadow: 0px 5px 5px #888888;
 }
 
-
-#task-basic-information{
-    padding:10px;
-    input{
-        width:100%
+#task-basic-information {
+    padding: 10px;
+    input {
+        width: 100%
     }
 }
 
-input,select,label{
-    font-size:$input-font-size ;
+input,
+select,
+label {
+    font-size: $input-font-size;
 }
 
-input{
-    padding:10px
+input {
+    padding: 10px
 }
 
-#class-status{
-    select{
-        display:block;
-        margin:0 auto;
+#class-status {
+    select {
+        display: block;
+        margin: 0 auto;
     }
 }
-#task-status{
-    margin:auto;
-    overflow:hidden;
-    input[type="radio"]{
-        display:none;
+
+#task-status {
+    margin: auto;
+    margin-bottom: 20px;
+    overflow: hidden;
+    input[type="radio"] {
+        display: none;
     }
-    label{
-        display:block;
-        margin:auto;
-        text-align:center;
-        border:1px solid #9D9DE4;
-        padding:10px;
+    label {
+        display: block;
+        margin: auto;
+        text-align: center;
+        border: 1px solid #9D9DE4;
+        padding: 10px;
     }
     input[type="radio"]:checked + label {
-            background-color: #B7B7E8;
-        }
+        background-color: #B7B7E8;
+    }
 }
 
+#btn-submit {
+    display: block;
+    margin: auto;
+    background-color: #5EB55E;
+    border: none;
+    font-size: 200%;
+}
+
+#data {
+    input {
+        width: 100%;
+    }
+}
+
+.btn {
+    background-color: #5EB55E;
+    padding: 10px 20px;
+    border: none;
+}
+
+#task-date {
+    input {
+        width: 100%;
+    }
+}
+
+#task-list {
+    overflow: scroll;
+    width: 100%;
+    table {
+        padding: 20px;
+        background-color: #E4E4E4;
+    }
+    thead {
+        background-color: gray;
+    }
+    td {
+        padding: 10px;
+        border: 1px solid #fff;
+    }
+}
+
+#full-description {
+    textarea {
+        width: 100%;
+        height: 300px;
+        resize: none;
+    }
+}
 
 @media screen and (min-device-width: 1200px) and (max-device-width: 1600px) and (-webkit-min-device-pixel-ratio: 1) {
-    .container{
-        width:960;
+    .container {
+        width: 960;
+    }
+    #task-list {
+        overflow: auto;
     }
 }
 
 
-@media screen and (min-device-width: 1600px)  {
-    .container{
-        width:1200px;
+@media screen and (min-device-width: 1600px) {
+    .container {
+        width: 1200px;
+    }
+    #column-left {
+        width: 50%;
+        float: left;
+        padding: 10px
+    }
+    #column-right {
+        width: 50%;
+        border: 1px solid #fff;
+        float: right;
+        padding: 10px
+    }
+    #task-list {
+        overflow: auto;
     }
 }
