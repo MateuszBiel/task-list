@@ -101,6 +101,7 @@ input {
 #task-date {
     input {
         width: 100%;
+        color: black !important;
     }
 }
 
@@ -127,6 +128,23 @@ input {
         resize: none;
     }
 }
+
+
+.sortorder:after {
+  content: '\25b2';
+}
+.sortorder.reverse:after {
+  content: '\25bc';
+}
+
+#column-right{
+    >div{
+        >h1{
+            padding:20px;
+        }
+    }
+}
+
 
 @media screen and (min-device-width: 1200px) and (max-device-width: 1600px) and (-webkit-min-device-pixel-ratio: 1) {
     .container {

@@ -50,16 +50,6 @@ var Todo = mongoose.model('taskList', {
 // api ---------------------------------------------------------------------
 // get all taskList
 
-function getTaskList(){
-    Todo.find(function(err, taskList) {
-        // if there is an error retrieving, send the error. nothing after res.send(err) will execute
-        if (err)
-            res.send(err)
-        // res.json(taskList); // return all taskList in JSON format
-        return taskList;
-    });
-}
-
 app.get('/api/taskList', function(req, res) {
 
     // use mongoose to get all taskList in the database
@@ -157,6 +147,55 @@ app.delete('/api/taskList/:taskList_id', function(req, res) {
 // app.get('*', function(req, res) {
 //     res.sendfile('./public/index.html'); // load the single view file (angular will handle the page changes on the front-end)
 // });
+
+
+// socket API
+
+// ORM functions
+
+function getTaskList(){
+    Todo.find(function(err, taskList) {
+        // if there is an error retrieving, send the error. nothing after res.send(err) will execute
+        if (err)
+            res.send(err)
+        // res.json(taskList); // return all taskList in JSON format
+        return taskList;
+    });
+}
+
+function getTaskList(id){
+    Todo.find({
+        _id: id
+    }, function(err, taskList) {
+
+        // if there is an error retrieving, send the error. nothing after res.send(err) will execute
+        if (err)
+            res.send(err)
+
+        res.json(taskList); // return all taskList in JSON format
+    });
+}
+
+function addTask(req){
+    Todo.create({
+        text: req.body.text,
+        priority: req.body.priority["id"],
+        date: req.body.date,
+        radio: req.body.radio,
+        done: false
+    }, function(err, todo) {
+        if (err)
+            res.send(err);
+        
+        // get and return all the taskList after you create another
+        Todo.find(function(err, taskList) {
+            if (err)
+                res.send(err)
+            res.json(taskList);
+            io.emit('chat message', taskList);
+        });
+    });
+}
 
 var addresses = ip.address();
 

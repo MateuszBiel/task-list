@@ -30,14 +30,15 @@
         <div id="column-left">
             <form action="javascript:void(0)">
                 <div id="task-basic-information">
-                    <input type="text" ng-model="formData.text" placeholder="task name">
+                    <input type="text" required="!formData.text" ng-model="formData.text" placeholder="task name">
                 </div>
                 <div id="class-status">
                     <select ng-init="formData.priority = selectOptions[0]" ng-model="formData.priority" ng-options="option.label for option in selectOptions">
                     </select>
                 </div>
                 <div id="task-date">
-                    <input type="date" ng-model="formData.date">
+                    <input id="date-input"  type="date" ng-model="formData.date">
+
                 </div>
                 <div id="task-status">
                     <input type="radio" ng-model="formData.radio" name="active" id="active" value="Active">
@@ -45,7 +46,6 @@
                     <input type="radio" ng-model="formData.radio" name="active" id="completed" value="Completed">
                     <label for="completed">COMPLETE</label>
                 </div>
-                {{formData}}
                 <button id="btn-submit" class="btn" type="submit" ng-click="addTask()">+</button>
             </form>
             <div id="task-list">
@@ -54,10 +54,11 @@
                     <thead>
                         <tr>
                             <td>Del</td>
-                            <td><span ng-click="order('text')">Text</span></td>
-                            <td><span ng-click="order('priority')">Priority</span></td>
-                            <td><span ng-click="order('date')">Date</span></td>
-                            <td><span ng-click="order('radio')">Status</span></td>
+                            <td><span ng-click="order('text')">Text <span class="sortorder" ng-show="predicate == 'text'" ng-class="{reverse:reverse}"></span></span></td>
+                            <td><span ng-click="order('priority')">Priority <span class="sortorder" ng-show="predicate == 'priority'" ng-class="{reverse:reverse}"></span></span></td>
+                            <td><span ng-click="order('date')">Date <span class="sortorder" ng-show="predicate == 'date'" ng-class="{reverse:reverse}"></span></span></td>
+                            <td><span ng-click="order('radio')">Status <span class="sortorder" ng-show="predicate == 'radio'" ng-class="{reverse:reverse}"></span></span></td>
+                            <td><span >Details</span></td>
                         </tr>
                     </thead>
                     <tbody>
@@ -65,23 +66,26 @@
                             <td>
                                 <input type="checkbox" ng-click="deleteTodo(todo._id)">
                             </td>
-                            <td> <strong ng-click="getTask(todo._id)">{{ todo.text }}</strong></td>
+                            <td> <strong>{{ todo.text }}</strong></td>
                             <td> {{ todo.priority }}</td>
                             <td> {{ todo.date }}</td>
                             <td> {{ todo.radio }}</td>
+                            <td>
+                                <input type="radio" name="seslected-task" ng-click="getTask(todo._id)">
+                            </td>
                         </tr>
                     </tbody>
                 </table>
             </div>
         </div>
         <div id="column-right">
-            <form action="javascript:void(0)" ng-hide="false">
+            <div ng-show="isSelect"><h1>Please select task</h1></div>
+            <form action="javascript:void(0)" ng-hide="isSelect">
                 <div id="data">
                     <label for="current-task">Task name:</label>
-                    <input type="text" id="current-task" ng-model="currentElement.priority" value="{{currentElement.priority}}">{{currentElement}} text {{currentElement.priority['id']}}
+                    <input type="text" id="current-task" ng-model="currentElement.text" value="{{currentElement.text}}">
                 </div>
                 <div id="class-status">
-                    {{currentElement.priority}}
                     <select ng-model="currentElement.priority" ng-options="option.label for option in selectOptions"ng-init="currentElement.priority=selectOptions[0]">
                     </select>
                 </div>

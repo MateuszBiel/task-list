@@ -1,10 +1,11 @@
 var taskApp = angular.module('taskApp', [])
-    .controller('mainController', function mainController($scope, $http) {
+    .controller('mainController', function mainController($scope, $http, $filter) {
         $scope.formData = {};
         $scope.currentElement = {};
         $scope.isSelect = true;
 
         // when landing on the page, get all taskList and show them
+
         $http.get('/api/taskList')
             .success(function(data) {
                 $scope.taskList = data;
@@ -27,15 +28,26 @@ var taskApp = angular.module('taskApp', [])
 
         // when submitting the add form, send the text to the node API
         $scope.addTask = function() {
-            console.log($scope.formData);
-            $http.post('/api/taskList', $scope.formData)
-                .success(function(data) {
-                    $scope.formData = {}; // clear the form so our user is ready to enter another
-                    console.log(data);
-                })
-                .error(function(data) {
-                    console.log('Error: ' + data);
-                });
+            if ($scope.formData.text) {
+                if (!$scope.formData.date) {
+                    $scope.date = new Date();
+                    $scope.tomorrow = new Date();
+                    $scope.tomorrow.setDate($scope.tomorrow.getDate() + 1);
+                    $scope.formData.date = $filter('date')($scope.tomorrow, 'yyyy-MM-dd');
+
+                }
+                console.log($scope.formData);
+                $http.post('/api/taskList', $scope.formData)
+                    .success(function(data) {
+                        $scope.formData = {}; // clear the form so our user is ready to enter another
+                        $scope.formData.priority = $scope.selectOptions[0];
+                        console.log($scope.formData);
+                    })
+                    .error(function(data) {
+                        console.log('Error: ' + data);
+                    });
+            }
+
         };
 
         // delete a todo after checking it
@@ -75,15 +87,15 @@ var taskApp = angular.module('taskApp', [])
                     // below function works perfects
                     console.log("--");
                     // display selectced object from select option object
-                    console.log($scope.selectOptions[$scope.currentElement.priority["id"]-1]);
+                    console.log($scope.selectOptions[$scope.currentElement.priority-1]);
                     console.log($scope.currentElement.priority);
                     //objects are the smae but works olny from  $scope.selectOptions
-                    $scope.currentElement.priority = $scope.selectOptions[$scope.currentElement.priority["id"]-1];
+                    $scope.currentElement.priority = $scope.selectOptions[$scope.currentElement.priority-1];
                 })
                 .error(function(data) {
                     console.log('Error: ' + data);
                 });
-            
+
         };
 
         $scope.editTask = function(id) {
@@ -121,16 +133,10 @@ var taskApp = angular.module('taskApp', [])
             "label": "3"
         }];
 
-        $scope.myDate = new Date();
-        console.log($scope.myDate);
-        $scope.customer = {
-            name: 'Naomi',
-            address: '1600 Amphitheatre'
-        };
 
     })
-    .directive('editTask', function() {
-        return {
-            templateUrl: 'd-edit-task.html'
+    .factory('getTaskFromWebSocket', ['', function(){
+        return function name(){
+            
         };
-    });
+    }])
