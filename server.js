@@ -49,6 +49,17 @@ var Todo = mongoose.model('taskList', {
 });
 // api ---------------------------------------------------------------------
 // get all taskList
+
+function getTaskList(){
+    Todo.find(function(err, taskList) {
+        // if there is an error retrieving, send the error. nothing after res.send(err) will execute
+        if (err)
+            res.send(err)
+        // res.json(taskList); // return all taskList in JSON format
+        return taskList;
+    });
+}
+
 app.get('/api/taskList', function(req, res) {
 
     // use mongoose to get all taskList in the database

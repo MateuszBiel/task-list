@@ -75,13 +75,14 @@
             </div>
         </div>
         <div id="column-right">
-            <form action="javascript:void(0)">
+            <form action="javascript:void(0)" ng-hide="false">
                 <div id="data">
                     <label for="current-task">Task name:</label>
-                    <input type="text" id="current-task" ng-model="currentElement.text" value="{{currentElement.text}}">{{currentElement}} text {{currentElement.priority['id']}}
+                    <input type="text" id="current-task" ng-model="currentElement.priority" value="{{currentElement.priority}}">{{currentElement}} text {{currentElement.priority['id']}}
                 </div>
                 <div id="class-status">
-                    <select ng-model="currentElement.priority" ng-options="option.label for option in selectOptions">
+                    {{currentElement.priority}}
+                    <select ng-model="currentElement.priority" ng-options="option.label for option in selectOptions"ng-init="currentElement.priority=selectOptions[0]">
                     </select>
                 </div>
                 <div id="task-date">
@@ -96,11 +97,7 @@
                 </div>
             </form>
             <script src="/socket.io/socket.io.js"></script>
-            <ul id="messages"></ul>
-            <form action="">
-                <input id="m" autocomplete="off" />
-                <button>Send</button>
-            </form>
+            
             <script>
             var socket = io();
             // $('form').submit(function() {
@@ -109,7 +106,7 @@
             //     return false;
             // });
             socket.on('chat message', function(msg) {
-                
+
                 angular.element(document.getElementById('body')).scope().updateData();
                 // $('#data-table tbody').append($('<tr>').append($('<td>').text(test)));
             });
