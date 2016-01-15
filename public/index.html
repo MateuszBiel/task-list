@@ -9,17 +9,17 @@
     <title>Node/Angular Todo App</title>
     <!-- SCROLLS -->
     <!-- SPELLS -->
-    <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.0.8/angular.min.js"></script>
-    <link rel="stylesheet" href="normalize.css/normalize.css"></link>
-    <link rel="stylesheet" href="css/main.css">
     <script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
-    <!-- load jquery -->
-    <!-- load angular -->
-    <script src="js/core.js"></script>
     <script src="better-dom/dist/better-dom.js"></script>
     <script src="better-i18n-plugin/dist/better-i18n-plugin.js"></script>
     <script src="better-dateinput-polyfill/dist/better-dateinput-polyfill.js"></script>
     <script src="https://cdn.socket.io/socket.io-1.4.3.js"></script>
+    <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.0.8/angular.min.js"></script>
+    <link rel="stylesheet" href="normalize.css/normalize.css"></link>
+    <link rel="stylesheet" href="css/main.css">
+    <!-- load jquery -->
+    <!-- load angular -->
+    <script src="js/core.js"></script>
 </head>
 
 <body id="body" ng-controller="mainController">
@@ -37,8 +37,7 @@
                     </select>
                 </div>
                 <div id="task-date">
-                    <input id="date-input"  type="date" ng-model="formData.date">
-
+                    <input id="date-input" type="date" ng-model="formData.date" data-format="yyyy-MM-dd">
                 </div>
                 <div id="task-status">
                     <input type="radio" ng-model="formData.radio" name="active" id="active" value="Active">
@@ -49,29 +48,41 @@
                 <button id="btn-submit" class="btn" type="submit" ng-click="addTask()">+</button>
             </form>
             <div id="task-list">
-                <h3>Current task</h3>
+                <h3>Current task
+                <div id="dipslay-status">
+                    <input type="checkbox" ng-model="Active" id="activeBtn">
+                    <label for="activeBtn">ACTIVE</label>
+                    <input type="checkbox" ng-model="Completed" id="completeBtn">
+                    <label for="completeBtn">COMPLETE</label>
+                </div>
+                {{currentElement }}
+                </h3>
                 <table id="data-table">
                     <thead>
                         <tr>
                             <td>Del</td>
-                            <td><span ng-click="order('text')">Text <span class="sortorder" ng-show="predicate == 'text'" ng-class="{reverse:reverse}"></span></span></td>
-                            <td><span ng-click="order('priority')">Priority <span class="sortorder" ng-show="predicate == 'priority'" ng-class="{reverse:reverse}"></span></span></td>
-                            <td><span ng-click="order('date')">Date <span class="sortorder" ng-show="predicate == 'date'" ng-class="{reverse:reverse}"></span></span></td>
-                            <td><span ng-click="order('radio')">Status <span class="sortorder" ng-show="predicate == 'radio'" ng-class="{reverse:reverse}"></span></span></td>
-                            <td><span >Details</span></td>
+                            <td><span ng-click="order('text')">Text <span class="sortorder" ng-show="predicate == 'text'" ng-class="{reverse:reverse}"></span></span>
+                            </td>
+                            <td><span ng-click="order('priority')">Priority <span class="sortorder" ng-show="predicate == 'priority'" ng-class="{reverse:reverse}"></span></span>
+                            </td>
+                            <td><span ng-click="order('date')">Date <span class="sortorder" ng-show="predicate == 'date'" ng-class="{reverse:reverse}"></span></span>
+                            </td>
+                            <td><span ng-click="order('radio')">Status <span class="sortorder" ng-show="predicate == 'radio'" ng-class="{reverse:reverse}"></span></span>
+                            </td>
+                            <td><span>Details</span></td>
                         </tr>
                     </thead>
                     <tbody>
-                        <tr class="checkbox" ng-repeat="todo in taskList | orderBy:predicate:reverse">
+                        <tr class="checkbox" ng-repeat="todo in taskList | orderBy:predicate:reverse" ng-show="(todo.radio == 'Completed') == Completed || (todo.radio == 'Active') == Active">
                             <td>
                                 <input type="checkbox" ng-click="deleteTodo(todo._id)">
                             </td>
-                            <td> <strong>{{ todo.text }}</strong></td>
+                            <td> <strong>{{ todo.text }}</strong> </td>
                             <td> {{ todo.priority }}</td>
                             <td> {{ todo.date }}</td>
-                            <td> {{ todo.radio }}</td>
+                            <td> {{ todo.radio }} </td>
                             <td>
-                                <input type="radio" name="seslected-task" ng-click="getTask(todo._id)">
+                                <input type="radio" name="seslected-task" ng-click="getTaskIo(todo._id)">
                             </td>
                         </tr>
                     </tbody>
@@ -79,14 +90,16 @@
             </div>
         </div>
         <div id="column-right">
-            <div ng-show="isSelect"><h1>Please select task</h1></div>
+            <div ng-show="isSelect">
+                <h1>Please select task</h1>
+            </div>
             <form action="javascript:void(0)" ng-hide="isSelect">
                 <div id="data">
                     <label for="current-task">Task name:</label>
                     <input type="text" id="current-task" ng-model="currentElement.text" value="{{currentElement.text}}">
                 </div>
                 <div id="class-status">
-                    <select ng-model="currentElement.priority" ng-options="option.label for option in selectOptions"ng-init="currentElement.priority=selectOptions[0]">
+                    <select ng-model="currentElement.priority" ng-options="option.label for option in selectOptions" ng-init="currentElement.priority=selectOptions[0]">
                     </select>
                 </div>
                 <div id="task-date">
@@ -100,8 +113,8 @@
                     <button class="btn" type="cancel" ng-click="clearTask()">CANCEL</button>
                 </div>
             </form>
+            <a href="" ng-click="getTasksIo()">asdf</a>
             <script src="/socket.io/socket.io.js"></script>
-            
             <script>
             var socket = io();
             // $('form').submit(function() {

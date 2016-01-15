@@ -51,7 +51,6 @@ var Todo = mongoose.model('taskList', {
 // get all taskList
 
 app.get('/api/taskList', function(req, res) {
-
     // use mongoose to get all taskList in the database
     Todo.find(function(err, taskList) {
         // if there is an error retrieving, send the error. nothing after res.send(err) will execute
@@ -87,7 +86,7 @@ app.post('/api/taskList', function(req, res) {
     }, function(err, todo) {
         if (err)
             res.send(err);
-        
+
         // get and return all the taskList after you create another
         Todo.find(function(err, taskList) {
             if (err)
@@ -153,30 +152,36 @@ app.delete('/api/taskList/:taskList_id', function(req, res) {
 
 // ORM functions
 
-function getTaskList(){
-    Todo.find(function(err, taskList) {
-        // if there is an error retrieving, send the error. nothing after res.send(err) will execute
+function getTasksList() {
+    console.log("function getTasksList");
+    var tmpList = Todo.find(function(err, taskList) {
         if (err)
             res.send(err)
-        // res.json(taskList); // return all taskList in JSON format
+        console.log("getTasksList inner");
+        io.emit('getTaskListIo', taskList);
         return taskList;
     });
+    console.log("getTasksList outer");
+    return tmpList;
 }
 
-function getTaskList(id){
-    Todo.find({
-        _id: id
-    }, function(err, taskList) {
+function getTask(req) {
+    console.log("function getTaskList");
 
-        // if there is an error retrieving, send the error. nothing after res.send(err) will execute
+    var tmpList = Todo.find({
+        _id: req
+    }, function(err, taskList) {
         if (err)
             res.send(err)
-
-        res.json(taskList); // return all taskList in JSON format
+        console.log("getTasksList inner");
+        io.emit('getTaskListIo', taskList);
+        return taskList;
     });
+    console.log("getTasksList outer");
+    return tmpList;
 }
 
-function addTask(req){
+function addTask(req) {
     Todo.create({
         text: req.body.text,
         priority: req.body.priority["id"],
@@ -186,7 +191,7 @@ function addTask(req){
     }, function(err, todo) {
         if (err)
             res.send(err);
-        
+
         // get and return all the taskList after you create another
         Todo.find(function(err, taskList) {
             if (err)
@@ -197,12 +202,71 @@ function addTask(req){
     });
 }
 
+function removeTask(req) {
+    Todo.remove({
+        _id: req.params.taskList_id
+    }, function(err, todo) {
+        if (err)
+            res.send(err);
+        io.emit('chat message', "update");
+        // get and return all the taskList after you create another
+        Todo.find(function(err, taskList) {
+            if (err)
+                res.send(err)
+            res.json(taskList);
+        });
+        Todo.find(function(err, taskList) {
+            // if there is an error retrieving, send the error. nothing after res.send(err) will execute
+            if (err)
+                res.send(err)
+            res.json(taskList); // return all taskList in JSON format
+        });
+    });
+}
+
+
+function updateTask(req) {
+    Todo.update({
+        _id: req.params.taskList_id
+    }, {
+        text: req.body.text,
+        priority: req.body.priority,
+        date: req.body.date,
+        radio: req.body.radio,
+        description: req.body.description,
+        done: false
+    }, function(err, todo) {
+        if (err)
+            res.send(err);
+
+        Todo.find(function(err, taskList) {
+            if (err)
+                res.send(err)
+            res.json(taskList);
+        });
+    });
+}
+
 var addresses = ip.address();
 
-io.on('connection', function(socket) {
+io.on('connect', function(socket) {
     socket.on('chat message', function(msg) {
         console.log(msg);
         io.emit('chat message', msg);
+    });
+    socket.on('getTaskListIo', function() {
+        console.log('getTaskListIo');
+        var tmp = getTasksList();
+        console.log("some logs");
+        //console.log(tmp);
+        io.emit('getTaskListIo', tmp);
+    });
+    socket.on('getTaskIo', function(msg) {
+        console.log('2 getTaskListIo');
+        var tmp = getTask(msg);
+        console.log("some logs");
+        //console.log(tmp);
+        io.emit('getTaskIo', tmp);
     });
 });
 

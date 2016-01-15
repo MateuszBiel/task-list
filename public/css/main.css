@@ -73,8 +73,7 @@ input {
   border: none; }
 
 #task-date input {
-  width: 100%;
-  color: black !important; }
+  width: 100%; }
 
 #task-list {
   overflow: scroll;
