@@ -1,7 +1,7 @@
 var gulp = require('gulp');
 var browserSync = require('browser-sync').create();
 var sass = require('gulp-sass');
-var    exec = require('child_process').exec;
+var exec = require('child_process').exec;
 var connect = require('gulp-connect');
 var autoprefixer = require('gulp-autoprefixer');
 
@@ -15,17 +15,17 @@ gulp.task('test', function(done) {
     }, done).start();
 });
 
-gulp.task('server', function (cb) {
-  exec('node ./server.js', function (err, stdout, stderr) {
-    console.log(stdout);
-    console.log(stderr);
-    cb(err);
-  });
-  exec('mongod --dbpath ./data', function (err, stdout, stderr) {
-    console.log(stdout);
-    console.log(stderr);
-    cb(err);
-  });
+gulp.task('server', function(cb) {
+    exec('node ./server.js', function(err, stdout, stderr) {
+        console.log(stdout);
+        console.log(stderr);
+        cb(err);
+    });
+    exec('mongod --dbpath ./data', function(err, stdout, stderr) {
+        console.log(stdout);
+        console.log(stderr);
+        cb(err);
+    });
 })
 
 // Compile sass into CSS & auto-inject into browsers
@@ -35,20 +35,19 @@ gulp.task('sass', function() {
         .pipe(gulp.dest("public/css"));
 });
 
-gulp.task('connect', function(){
+gulp.task('connect', function() {
     connect.server({
         livereload: true,
         port: 8080
     });
 });
 
-gulp.task('reload', function(){
-    gulp.src('./public/**/*.*')
-    .pipe(connect.reload());
+gulp.task('reload', function() {
+    gulp.src('./public/**/*.*');
 });
 
 
-gulp.task('default', function () {
+gulp.task('default', function() {
     return gulp.src('public/css/*.css')
         .pipe(autoprefixer({
             browsers: ['last 2 versions'],
@@ -58,11 +57,10 @@ gulp.task('default', function () {
 });
 
 
-gulp.task('watch',function(){
+gulp.task('watch', function() {
     gulp.watch("public/sass/*.scss", ['sass']);
     gulp.watch(['public/scripts/*.js'], ['reload']);
     gulp.watch(['public/css/*.css'], ['reload']);
 })
 
 gulp.task('default', ['sass', 'server', 'watch']);
-

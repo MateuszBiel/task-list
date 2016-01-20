@@ -14,7 +14,7 @@ div {
 
 .datepickerdemoBasicUsage {
     /** Demo styles for mdCalendar. */
-    md-content {
+    .md-content {
         padding-bottom: 200px;
     }
     .validation-messages {
@@ -108,6 +108,7 @@ input {
     overflow: scroll;
     width: 100%;
     table {
+        width:100%;
         padding: 20px;
         background-color: #E4E4E4;
     }
@@ -128,6 +129,9 @@ input {
     }
 }
 
+input[type="date"]{
+    color:black!important;
+}
 
 .sortorder:after {
   content: '\25b2';

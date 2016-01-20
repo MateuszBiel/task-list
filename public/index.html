@@ -6,23 +6,26 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <!-- Optimize mobile viewport -->
-    <title>Node/Angular Todo App</title>
+    <title>task list</title>
     <!-- SCROLLS -->
     <!-- SPELLS -->
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.0-rc.1/angular.min.js"></script>
     <script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
     <script src="better-dom/dist/better-dom.js"></script>
     <script src="better-i18n-plugin/dist/better-i18n-plugin.js"></script>
     <script src="better-dateinput-polyfill/dist/better-dateinput-polyfill.js"></script>
     <script src="https://cdn.socket.io/socket.io-1.4.3.js"></script>
-    <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.0.8/angular.min.js"></script>
+    
     <link rel="stylesheet" href="normalize.css/normalize.css"></link>
     <link rel="stylesheet" href="css/main.css">
     <!-- load jquery -->
     <!-- load angular -->
     <script src="js/core.js"></script>
+    <script src="js/mainController.controller.js"></script>
+    <script src="js/socket-factory.js"></script>
 </head>
 
-<body id="body" ng-controller="mainController">
+<body id="body" ng-controller="mainController as main">
     <div class="container">
         <div id="app-name">
             <h1>TASK MANAGER</h1>
@@ -30,33 +33,32 @@
         <div id="column-left">
             <form action="javascript:void(0)">
                 <div id="task-basic-information">
-                    <input type="text" required="!formData.text" ng-model="formData.text" placeholder="task name">
+                    <input type="text" required="!main.formData.text" ng-model="main.formData.text" placeholder="task name">
                 </div>
                 <div id="class-status">
-                    <select ng-init="formData.priority = selectOptions[0]" ng-model="formData.priority" ng-options="option.label for option in selectOptions">
+                    <select ng-init="main.formData.priority = main.selectOptions[0]" ng-model="main.formData.priority" ng-options="option.label for option in main.selectOptions">
                     </select>
                 </div>
                 <div id="task-date">
-                    <input id="date-input" type="date" ng-model="formData.date" data-format="yyyy-MM-dd">
+                    <input id="date-input" type="date" ng-model="main.formData.date" data-format="yyyy-MM-dd">
                 </div>
                 <div id="task-status">
-                    <input type="radio" ng-model="formData.radio" name="active" id="active" value="Active">
+                    <input type="radio" ng-model="main.formData.radio" name="active" id="active" value="Active">
                     <label for="active">ACTIVE</label>
-                    <input type="radio" ng-model="formData.radio" name="active" id="completed" value="Completed">
+                    <input type="radio" ng-model="main.formData.radio" name="active" id="completed" value="Completed">
                     <label for="completed">COMPLETE</label>
                 </div>
-                <button id="btn-submit" class="btn" type="submit" ng-click="addTask()">+</button>
+                <button id="btn-submit" class="btn" type="submit" ng-click="main.addTaskIo()">+</button>
             </form>
             <div id="task-list">
                 <h3>Current task
                 <div id="dipslay-status">
-                    <input type="checkbox" ng-model="Active" id="activeBtn">
+                    <input type="checkbox" ng-model="main.Active" id="activeBtn">
                     <label for="activeBtn">ACTIVE</label>
-                    <input type="checkbox" ng-model="Completed" id="completeBtn">
+                    <input type="checkbox" ng-model="main.Completed" id="completeBtn">
                     <label for="completeBtn">COMPLETE</label>
                 </div>
-                {{currentElement }}
-                </h3>
+                </h3> {{ main.formData }}
                 <table id="data-table">
                     <thead>
                         <tr>
@@ -73,16 +75,16 @@
                         </tr>
                     </thead>
                     <tbody>
-                        <tr class="checkbox" ng-repeat="todo in taskList | orderBy:predicate:reverse" ng-show="(todo.radio == 'Completed') == Completed || (todo.radio == 'Active') == Active">
+                        <tr class="checkbox" ng-repeat="todo in main.taskList | orderBy:predicate:reverse" ng-show="(todo.radio == 'Completed') == main.Completed || (todo.radio == 'Active') == main.Active">
                             <td>
-                                <input type="checkbox" ng-click="deleteTodo(todo._id)">
+                                <input type="checkbox" ng-click="main.removeTaskIo(todo._id)">
                             </td>
                             <td> <strong>{{ todo.text }}</strong> </td>
                             <td> {{ todo.priority }}</td>
-                            <td> {{ todo.date }}</td>
+                            <td> {{ todo.date | date: "yyyy-MM-dd" }}</td>
                             <td> {{ todo.radio }} </td>
                             <td>
-                                <input type="radio" name="seslected-task" ng-click="getTaskIo(todo._id)">
+                                <input type="radio" name="seslected-task" ng-click="main.getTaskIo(todo._id)">
                             </td>
                         </tr>
                     </tbody>
@@ -90,44 +92,31 @@
             </div>
         </div>
         <div id="column-right">
-            <div ng-show="isSelect">
+            <div ng-show="main.isSelect">
                 <h1>Please select task</h1>
             </div>
-            <form action="javascript:void(0)" ng-hide="isSelect">
+            {{main.currentElement}}
+            <form action="javascript:void(0)" ng-hide="main.isSelect">
                 <div id="data">
                     <label for="current-task">Task name:</label>
-                    <input type="text" id="current-task" ng-model="currentElement.text" value="{{currentElement.text}}">
+                    <input type="text" id="current-task" ng-model="main.currentElement.text" value="{{main.currentElement.text}}">
                 </div>
                 <div id="class-status">
-                    <select ng-model="currentElement.priority" ng-options="option.label for option in selectOptions" ng-init="currentElement.priority=selectOptions[0]">
+                    <select ng-model="main.currentElement.priority" ng-options="option.label for option in main.selectOptions" ng-init="main.currentElement.priority=main.selectOptions[0]">
                     </select>
                 </div>
                 <div id="task-date">
-                    <input type="date" ng-model="currentElement.date">
+                    <input type="date" ng-model="main.currentElement.date">
                 </div>
                 <div id="full-description">
-                    <textarea ng-model="currentElement.description"></textarea>
+                    <textarea ng-model="main.currentElement.description"></textarea>
                 </div>
                 <div id="edit-confirm-buttons">
-                    <button class="btn" type="submit" ng-click="editTask(currentElement._id)">EDIT</button>
-                    <button class="btn" type="cancel" ng-click="clearTask()">CANCEL</button>
+                    <button class="btn" type="submit" ng-click="main.updateDataIo(main.currentElement._id)">EDIT</button>
+                    <button class="btn" type="cancel" ng-click="main.clearTask()">CANCEL</button>
                 </div>
             </form>
-            <a href="" ng-click="getTasksIo()">asdf</a>
             <script src="/socket.io/socket.io.js"></script>
-            <script>
-            var socket = io();
-            // $('form').submit(function() {
-            //     socket.emit('chat message', $('#m').val());
-            //     $('#m').val('');
-            //     return false;
-            // });
-            socket.on('chat message', function(msg) {
-
-                angular.element(document.getElementById('body')).scope().updateData();
-                // $('#data-table tbody').append($('<tr>').append($('<td>').text(test)));
-            });
-            </script>
         </div>
     </div>
 </body>

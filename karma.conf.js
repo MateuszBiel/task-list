@@ -18,8 +18,8 @@ module.exports = function(config) {
             'node_modules/angular/angular.js',
             'node_modules/angular-mocks/angular-resource.js',
             'node_modules/angular-mocks/angular-mocks.js',
-            'public/test/core.test.js',
-            'public/js/core.js'          
+            'test/unit/core.test.js',
+            'public/js/core.js'
         ],
 
 

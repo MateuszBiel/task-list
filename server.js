@@ -43,7 +43,7 @@ app.use(bodyParser.json({
 var Todo = mongoose.model('taskList', {
     text: String,
     priority: Object,
-    date: String,
+    date: Date,
     radio: String,
     description: String
 });
@@ -156,9 +156,11 @@ function getTasksList() {
     console.log("function getTasksList");
     var tmpList = Todo.find(function(err, taskList) {
         if (err)
-            res.send(err)
+            console.log(err)
+
         console.log("getTasksList inner");
         io.emit('getTaskListIo', taskList);
+        //console.log(taskList);
         return taskList;
     });
     console.log("getTasksList outer");
@@ -167,14 +169,17 @@ function getTasksList() {
 
 function getTask(req) {
     console.log("function getTaskList");
-
+    console.log(typeof req);
+    console.log(req['id']);
     var tmpList = Todo.find({
-        _id: req
+        _id: req['id']
     }, function(err, taskList) {
         if (err)
-            res.send(err)
-        console.log("getTasksList inner");
-        io.emit('getTaskListIo', taskList);
+            console.log(err)
+
+        console.log("getTask inner");
+        io.emit('getTaskIo', taskList);
+        console.log(taskList);
         return taskList;
     });
     console.log("getTasksList outer");
@@ -182,11 +187,12 @@ function getTask(req) {
 }
 
 function addTask(req) {
+    console.log(req['data']);
     Todo.create({
-        text: req.body.text,
-        priority: req.body.priority["id"],
-        date: req.body.date,
-        radio: req.body.radio,
+        text: req['data'].text,
+        priority: req['data'].priority["id"],
+        date: req['data'].date,
+        radio: req['data'].radio,
         done: false
     }, function(err, todo) {
         if (err)
@@ -195,54 +201,56 @@ function addTask(req) {
         // get and return all the taskList after you create another
         Todo.find(function(err, taskList) {
             if (err)
-                res.send(err)
-            res.json(taskList);
-            io.emit('chat message', taskList);
+                console.log(err)
+
+            console.log("getTasksList inner");
+            io.emit('getTaskListIo', taskList);
+            //console.log(taskList);
+            return taskList;
         });
     });
 }
 
 function removeTask(req) {
     Todo.remove({
-        _id: req.params.taskList_id
+        _id: req['id']
     }, function(err, todo) {
         if (err)
             res.send(err);
-        io.emit('chat message', "update");
-        // get and return all the taskList after you create another
         Todo.find(function(err, taskList) {
             if (err)
-                res.send(err)
-            res.json(taskList);
-        });
-        Todo.find(function(err, taskList) {
-            // if there is an error retrieving, send the error. nothing after res.send(err) will execute
-            if (err)
-                res.send(err)
-            res.json(taskList); // return all taskList in JSON format
+                console.log(err)
+
+            console.log("getTasksList inner");
+            io.emit('getTaskListIo', taskList);
+            //console.log(taskList);
+            return taskList;
         });
     });
 }
 
 
 function updateTask(req) {
+    console.log("req");
+    console.log(req.data)
+    var curdata = req.data;
     Todo.update({
-        _id: req.params.taskList_id
+        _id: curdata._id
     }, {
-        text: req.body.text,
-        priority: req.body.priority,
-        date: req.body.date,
-        radio: req.body.radio,
-        description: req.body.description,
+        text: curdata.text,
+        priority: curdata.priority.id,
+        date: curdata.date,
+        radio: curdata.radio,
+        description: curdata.description,
         done: false
     }, function(err, todo) {
         if (err)
-            res.send(err);
+            console.log(err)
 
         Todo.find(function(err, taskList) {
             if (err)
-                res.send(err)
-            res.json(taskList);
+                console.log(err)
+            io.emit('getTaskListIo', taskList);
         });
     });
 }
@@ -251,27 +259,48 @@ var addresses = ip.address();
 
 io.on('connect', function(socket) {
     socket.on('chat message', function(msg) {
-        console.log(msg);
+        //console.log(msg);
         io.emit('chat message', msg);
     });
     socket.on('getTaskListIo', function() {
         console.log('getTaskListIo');
-        var tmp = getTasksList();
-        console.log("some logs");
+        getTasksList();
+        //console.log("some logs");
         //console.log(tmp);
-        io.emit('getTaskListIo', tmp);
+        // io.emit('getTaskListIo', tmp);
     });
     socket.on('getTaskIo', function(msg) {
         console.log('2 getTaskListIo');
-        var tmp = getTask(msg);
-        console.log("some logs");
+        getTask(msg);
+        // console.log("some logs");
         //console.log(tmp);
-        io.emit('getTaskIo', tmp);
+        // io.emit('getTaskIo', tmp);
     });
+    socket.on('addNewTaskIo', function(msg) {
+        console.log('addNewTaskIo');
+        // console.log(msg);
+        addTask(msg);
+        // console.log("some logs");
+        //console.log(tmp);
+        // io.emit('getTaskListIo', tmp);
+    });
+    socket.on('removeTaskIo', function(msg) {
+        console.log('removeTaskIo');
+        // console.log(msg);
+        removeTask(msg);
+        // console.log("some logs");
+        //console.log(tmp);
+        // io.emit('getTaskListIo', tmp);
+    });
+    socket.on('updateTaskIo', function(msg) {
+        console.log("updateTaskIo");
+        updateTask(msg);
+    })
+
 });
 
 http.listen(8080, function() {
-    console.log('listening on *:8080');
+    console.log(addresses + ':8080');
 });
 // // // listen (start app with node server.js) ======================================
 // app.listen(8080);
