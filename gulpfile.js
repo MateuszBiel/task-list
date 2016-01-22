@@ -16,16 +16,17 @@ gulp.task('test', function(done) {
 });
 
 gulp.task('server', function(cb) {
-    exec('node ./server.js', function(err, stdout, stderr) {
-        console.log(stdout);
-        console.log(stderr);
-        cb(err);
-    });
     exec('mongod --dbpath ./data', function(err, stdout, stderr) {
         console.log(stdout);
         console.log(stderr);
         cb(err);
     });
+    exec('node ./server.js', function(err, stdout, stderr) {
+        console.log(stdout);
+        console.log(stderr);
+        cb(err);
+    });
+    
 })
 
 // Compile sass into CSS & auto-inject into browsers
@@ -43,7 +44,7 @@ gulp.task('connect', function() {
 });
 
 gulp.task('reload', function() {
-    gulp.src('./public/**/*.*');
+    return gulp.src('./public/**/*.*');
 });
 
 
@@ -55,6 +56,7 @@ gulp.task('default', function() {
         }))
         .pipe(gulp.dest(''));
 });
+
 
 
 gulp.task('watch', function() {

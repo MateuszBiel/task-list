@@ -159,6 +159,7 @@ function getTasksList() {
             console.log(err)
 
         console.log("getTasksList inner");
+
         io.emit('getTaskListIo', taskList);
         //console.log(taskList);
         return taskList;
@@ -265,6 +266,7 @@ io.on('connect', function(socket) {
     socket.on('getTaskListIo', function() {
         console.log('getTaskListIo');
         getTasksList();
+        io.emit('getTaskListIo',"erserserser");
         //console.log("some logs");
         //console.log(tmp);
         // io.emit('getTaskListIo', tmp);
@@ -298,6 +300,7 @@ io.on('connect', function(socket) {
     })
 
 });
+io.emit('test','test');
 
 http.listen(8080, function() {
     console.log(addresses + ':8080');

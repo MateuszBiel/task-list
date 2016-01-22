@@ -105,6 +105,34 @@ input[type="date"] {
 #column-right > div > h1 {
   padding: 20px; }
 
+#main-navbar {
+  display: none; }
+
+@media screen and (min-device-width: 1200px) {
+  .active {
+    border: 1px solid black;
+    border-radius: 5px; }
+  #burger {
+    display: none; }
+  #main-navbar {
+    border-radius: 5px;
+    display: block;
+    background-color: #5eb55e;
+    padding-top: 20px;
+    padding-bottom: 21px; }
+    #main-navbar li {
+      display: inline-block;
+      list-style: none; }
+    #main-navbar a {
+      padding: 20px 10px;
+      text-decoration: none;
+      color: white;
+      weight: bold; }
+    #main-navbar a:hover {
+      background: white;
+      color: black;
+      border-radius: 5px; } }
+
 @media screen and (min-device-width: 1200px) and (max-device-width: 1600px) and (-webkit-min-device-pixel-ratio: 1) {
   .container {
     width: 960; }

@@ -108,7 +108,7 @@ input {
     overflow: scroll;
     width: 100%;
     table {
-        width:100%;
+        width: 100%;
         padding: 20px;
         background-color: #E4E4E4;
     }
@@ -129,21 +129,59 @@ input {
     }
 }
 
-input[type="date"]{
-    color:black!important;
+input[type="date"] {
+    color: black!important;
 }
 
 .sortorder:after {
-  content: '\25b2';
-}
-.sortorder.reverse:after {
-  content: '\25bc';
+    content: '\25b2';
 }
 
-#column-right{
-    >div{
-        >h1{
-            padding:20px;
+.sortorder.reverse:after {
+    content: '\25bc';
+}
+
+#column-right {
+    >div {
+        >h1 {
+            padding: 20px;
+        }
+    }
+}
+
+#main-navbar {
+    display: none;
+}
+
+@media screen and (min-device-width: 1200px) {
+    .active{
+        border: 1px solid black;
+        border-radius:5px;
+    }
+    #burger {
+        display: none
+    }
+    #main-navbar {
+        border-radius:5px;
+        display: block;
+        background-color:#5eb55e;
+        padding-top:20px;
+        padding-bottom:21px;
+
+        li {
+            display:inline-block;
+            list-style: none;
+        }
+        a{
+            padding:20px 10px;
+            text-decoration:none;
+            color:white;
+            weight:bold;
+        }
+        a:hover{
+            background:white;
+            color:black;
+            border-radius:5px;
         }
     }
 }
@@ -157,7 +195,6 @@ input[type="date"]{
         overflow: auto;
     }
 }
-
 
 @media screen and (min-device-width: 1600px) {
     .container {
