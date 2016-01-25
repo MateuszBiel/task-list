@@ -47,6 +47,8 @@ var Todo = mongoose.model('taskList', {
     radio: String,
     description: String
 });
+
+
 // api ---------------------------------------------------------------------
 // get all taskList
 
@@ -151,24 +153,25 @@ app.delete('/api/taskList/:taskList_id', function(req, res) {
 // socket API
 
 // ORM functions
-
-function getTasksList() {
+exports.Todo = Todo;
+exports.getTasksList = function() {
     console.log("function getTasksList");
-    var tmpList = Todo.find(function(err, taskList) {
+    Todo.find(function(err, taskList) {
         if (err)
             console.log(err)
 
         console.log("getTasksList inner");
-
+        //console.log(taskList);
         io.emit('getTaskListIo', taskList);
         //console.log(taskList);
         return taskList;
+    }).sort({
+        id: 1
     });
     console.log("getTasksList outer");
-    return tmpList;
 }
 
-function getTask(req) {
+exports.getTask = function(req) {
     console.log("function getTaskList");
     console.log(typeof req);
     console.log(req['id']);
@@ -184,11 +187,12 @@ function getTask(req) {
         return taskList;
     });
     console.log("getTasksList outer");
-    return tmpList;
+
 }
 
-function addTask(req) {
-    console.log(req['data']);
+exports.addTask = function(req) {
+    console.log("function addTask");
+
     Todo.create({
         text: req['data'].text,
         priority: req['data'].priority["id"],
@@ -212,7 +216,8 @@ function addTask(req) {
     });
 }
 
-function removeTask(req) {
+exports.removeTask = function(req) {
+    console.log(req);
     Todo.remove({
         _id: req['id']
     }, function(err, todo) {
@@ -231,7 +236,7 @@ function removeTask(req) {
 }
 
 
-function updateTask(req) {
+exports.updateTask = function(req) {
     console.log("req");
     console.log(req.data)
     var curdata = req.data;
@@ -265,15 +270,15 @@ io.on('connect', function(socket) {
     });
     socket.on('getTaskListIo', function() {
         console.log('getTaskListIo');
-        getTasksList();
-        io.emit('getTaskListIo',"erserserser");
+        exports.getTasksList();
+        io.emit('getTaskListIo', "erserserser");
         //console.log("some logs");
         //console.log(tmp);
         // io.emit('getTaskListIo', tmp);
     });
     socket.on('getTaskIo', function(msg) {
         console.log('2 getTaskListIo');
-        getTask(msg);
+        exports.getTask(msg);
         // console.log("some logs");
         //console.log(tmp);
         // io.emit('getTaskIo', tmp);
@@ -281,7 +286,7 @@ io.on('connect', function(socket) {
     socket.on('addNewTaskIo', function(msg) {
         console.log('addNewTaskIo');
         // console.log(msg);
-        addTask(msg);
+        exports.addTask(msg);
         // console.log("some logs");
         //console.log(tmp);
         // io.emit('getTaskListIo', tmp);
@@ -289,18 +294,18 @@ io.on('connect', function(socket) {
     socket.on('removeTaskIo', function(msg) {
         console.log('removeTaskIo');
         // console.log(msg);
-        removeTask(msg);
+        exports.removeTask(msg);
         // console.log("some logs");
         //console.log(tmp);
         // io.emit('getTaskListIo', tmp);
     });
     socket.on('updateTaskIo', function(msg) {
         console.log("updateTaskIo");
-        updateTask(msg);
+        exports.updateTask(msg);
     })
 
 });
-io.emit('test','test');
+io.emit('test', 'test');
 
 http.listen(8080, function() {
     console.log(addresses + ':8080');
