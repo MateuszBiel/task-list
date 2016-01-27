@@ -16,6 +16,7 @@ var path = require('path')
 
 mongoose.connect('mongodb://localhost:/data/db'); // connect to mongoDB database on modulus.io
 
+
 app.use(express.static(__dirname + '/public')); // set the static files location /public/img will be /img for users
 app.use(express.static(__dirname + '/node_modules')); // set the static files location /public/img will be /img for users
 app.use(express.static(__dirname + '/bower_components'));
@@ -48,6 +49,7 @@ var Todo = mongoose.model('taskList', {
     description: String
 });
 
+exports.dbConnection= Todo;
 
 // api ---------------------------------------------------------------------
 // get all taskList
@@ -170,10 +172,10 @@ exports.getTasksList = function() {
     });
     console.log("getTasksList outer");
 }
-
+exports.oneRow;
 exports.getTask = function(req) {
-    console.log("function getTaskList");
-    console.log(typeof req);
+    console.log("function getTask");
+    console.log(req);
     console.log(req['id']);
     var tmpList = Todo.find({
         _id: req['id']
@@ -183,7 +185,8 @@ exports.getTask = function(req) {
 
         console.log("getTask inner");
         io.emit('getTaskIo', taskList);
-        console.log(taskList);
+        exports.oneRow = taskList;
+        //console.log(exports.oneRow );
         return taskList;
     });
     console.log("getTasksList outer");
@@ -217,12 +220,13 @@ exports.addTask = function(req) {
 }
 
 exports.removeTask = function(req) {
+    console.log("function removeTask");
     console.log(req);
     Todo.remove({
         _id: req['id']
     }, function(err, todo) {
         if (err)
-            res.send(err);
+            console.log(err);
         Todo.find(function(err, taskList) {
             if (err)
                 console.log(err)
@@ -256,8 +260,10 @@ exports.updateTask = function(req) {
         Todo.find(function(err, taskList) {
             if (err)
                 console.log(err)
+            //console.log(taskList);
             io.emit('getTaskListIo', taskList);
         });
+
     });
 }
 
