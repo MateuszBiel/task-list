@@ -1,13 +1,17 @@
 var io = require('socket.io-client'),
     assert = require('assert'),
-    expect = require('expect.js');
+    expect = require('expect.js'),
+    ip = require('ip');
 
+var addresses = ip.address();
+var ipAdress = 'http://'+addresses+':8080'
+console.log(ipAdress);
 
 describe('test siut for socket Io', function() {
 
-    var socket = io.connect('http://10.30.0.139:8080');
+    var socket = io.connect('http://10.30.0.84:8080');
 
-    describe('Socket Io test', function() {
+    describe('Socket Io test:', function() {
         this.timeout(6000);
 
         var globalLastRow;
@@ -40,6 +44,7 @@ describe('test siut for socket Io', function() {
                 console.log(data);
             });
             setTimeout(function() {
+                console.log(test);
                 expect(test).to.not.be.equal("");
                 done();
             }, 200);
@@ -59,6 +64,7 @@ describe('test siut for socket Io', function() {
 
             setTimeout(function() {
                 console.log("firsth wait");
+                console.log(resultList);
                 expect(resultList[resultList.length - 2].text).to.not.be.equal(resultList[resultList.length - 1].text);
                 console.log("----");
                 globalLastRow = resultList[resultList.length - 1]._id;

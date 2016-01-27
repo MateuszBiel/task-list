@@ -4,9 +4,12 @@
   "description": "",
   "main": "server.js",
   "scripts": {
+    "dbStart" : "node ./server.js",
+    "serverStart" : "node ./server.js",
     "testServer": "mocha -R spec ./test/server/*.js",
     "servers": "nodemon ./server.js localhost 8080",
     "test": "mocha -R spec ./test/spec/*.js",
+    "fullstart":"npm run testServer",
     "start": "gulp default"
   },
   "author": "",

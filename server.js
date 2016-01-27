@@ -3,18 +3,20 @@
 // set up ========================
 var express = require('express');
 var app = express(); // create our app w/ express
-var mongoose = require('mongoose'); // mongoose for mongodb
+
 var morgan = require('morgan'); // log requests to the console (express4)
 var bodyParser = require('body-parser'); // pull information from HTML POST (express4)
 var ip = require('ip');
 var http = require('http').Server(app);
 var io = require('socket.io')(http);
-var path = require('path')
+var path = require('path');
+var Todo = require('./db-model.js');
+require('./server-rest-CRUD.js');
+var socketIo = require('./server-socketio-CRUD.js');
 
 // var methodOverride = require('method-override'); // simulate DELETE and PUT (express4)
 // configuration =================
 
-mongoose.connect('mongodb://localhost:/data/db'); // connect to mongoDB database on modulus.io
 
 
 app.use(express.static(__dirname + '/public')); // set the static files location /public/img will be /img for users
@@ -41,110 +43,13 @@ app.use(bodyParser.json({
 
 // routes ======================================================================
 // define model =================
-var Todo = mongoose.model('taskList', {
-    text: String,
-    priority: Object,
-    date: Date,
-    radio: String,
-    description: String
-});
 
-exports.dbConnection= Todo;
+
+
 
 // api ---------------------------------------------------------------------
 // get all taskList
 
-app.get('/api/taskList', function(req, res) {
-    // use mongoose to get all taskList in the database
-    Todo.find(function(err, taskList) {
-        // if there is an error retrieving, send the error. nothing after res.send(err) will execute
-        if (err)
-            res.send(err)
-        res.json(taskList); // return all taskList in JSON format
-    });
-});
-
-app.get('/api/taskList/:taskList_id', function(req, res) {
-    Todo.find({
-        _id: req.params.taskList_id
-    }, function(err, taskList) {
-
-        // if there is an error retrieving, send the error. nothing after res.send(err) will execute
-        if (err)
-            res.send(err)
-
-        res.json(taskList); // return all taskList in JSON format
-    });
-});
-
-
-// create todo and send back all taskList after creation
-app.post('/api/taskList', function(req, res) {
-    // create a todo, information comes from AJAX request from Angular
-    Todo.create({
-        text: req.body.text,
-        priority: req.body.priority["id"],
-        date: req.body.date,
-        radio: req.body.radio,
-        done: false
-    }, function(err, todo) {
-        if (err)
-            res.send(err);
-
-        // get and return all the taskList after you create another
-        Todo.find(function(err, taskList) {
-            if (err)
-                res.send(err)
-            res.json(taskList);
-            io.emit('chat message', taskList);
-        });
-    });
-});
-
-app.put('/api/taskList/:taskList_id', function(req, res) {
-    Todo.update({
-        _id: req.params.taskList_id
-    }, {
-        text: req.body.text,
-        priority: req.body.priority,
-        date: req.body.date,
-        radio: req.body.radio,
-        description: req.body.description,
-        done: false
-    }, function(err, todo) {
-        if (err)
-            res.send(err);
-
-        Todo.find(function(err, taskList) {
-            if (err)
-                res.send(err)
-            res.json(taskList);
-        });
-    });
-})
-
-// delete a todo
-app.delete('/api/taskList/:taskList_id', function(req, res) {
-    Todo.remove({
-        _id: req.params.taskList_id
-    }, function(err, todo) {
-        if (err)
-            res.send(err);
-        io.emit('chat message', "update");
-        // get and return all the taskList after you create another
-        Todo.find(function(err, taskList) {
-            if (err)
-                res.send(err)
-            res.json(taskList);
-        });
-        Todo.find(function(err, taskList) {
-            // if there is an error retrieving, send the error. nothing after res.send(err) will execute
-            if (err)
-                res.send(err)
-            res.json(taskList); // return all taskList in JSON format
-        });
-    });
-});
 
 // application -------------------------------------------------------------
 // app.get('*', function(req, res) {
@@ -155,136 +60,20 @@ app.delete('/api/taskList/:taskList_id', function(req, res) {
 // socket API
 
 // ORM functions
-exports.Todo = Todo;
-exports.getTasksList = function() {
-    console.log("function getTasksList");
-    Todo.find(function(err, taskList) {
-        if (err)
-            console.log(err)
-
-        console.log("getTasksList inner");
-        //console.log(taskList);
-        io.emit('getTaskListIo', taskList);
-        //console.log(taskList);
-        return taskList;
-    }).sort({
-        id: 1
-    });
-    console.log("getTasksList outer");
-}
-exports.oneRow;
-exports.getTask = function(req) {
-    console.log("function getTask");
-    console.log(req);
-    console.log(req['id']);
-    var tmpList = Todo.find({
-        _id: req['id']
-    }, function(err, taskList) {
-        if (err)
-            console.log(err)
-
-        console.log("getTask inner");
-        io.emit('getTaskIo', taskList);
-        exports.oneRow = taskList;
-        //console.log(exports.oneRow );
-        return taskList;
-    });
-    console.log("getTasksList outer");
-
-}
-
-exports.addTask = function(req) {
-    console.log("function addTask");
-
-    Todo.create({
-        text: req['data'].text,
-        priority: req['data'].priority["id"],
-        date: req['data'].date,
-        radio: req['data'].radio,
-        done: false
-    }, function(err, todo) {
-        if (err)
-            res.send(err);
-
-        // get and return all the taskList after you create another
-        Todo.find(function(err, taskList) {
-            if (err)
-                console.log(err)
-
-            console.log("getTasksList inner");
-            io.emit('getTaskListIo', taskList);
-            //console.log(taskList);
-            return taskList;
-        });
-    });
-}
-
-exports.removeTask = function(req) {
-    console.log("function removeTask");
-    console.log(req);
-    Todo.remove({
-        _id: req['id']
-    }, function(err, todo) {
-        if (err)
-            console.log(err);
-        Todo.find(function(err, taskList) {
-            if (err)
-                console.log(err)
-
-            console.log("getTasksList inner");
-            io.emit('getTaskListIo', taskList);
-            //console.log(taskList);
-            return taskList;
-        });
-    });
-}
-
-
-exports.updateTask = function(req) {
-    console.log("req");
-    console.log(req.data)
-    var curdata = req.data;
-    Todo.update({
-        _id: curdata._id
-    }, {
-        text: curdata.text,
-        priority: curdata.priority.id,
-        date: curdata.date,
-        radio: curdata.radio,
-        description: curdata.description,
-        done: false
-    }, function(err, todo) {
-        if (err)
-            console.log(err)
-
-        Todo.find(function(err, taskList) {
-            if (err)
-                console.log(err)
-            //console.log(taskList);
-            io.emit('getTaskListIo', taskList);
-        });
-
-    });
-}
 
 var addresses = ip.address();
 
 io.on('connect', function(socket) {
-    socket.on('chat message', function(msg) {
-        //console.log(msg);
-        io.emit('chat message', msg);
-    });
     socket.on('getTaskListIo', function() {
-        console.log('getTaskListIo');
-        exports.getTasksList();
-        io.emit('getTaskListIo', "erserserser");
+        console.log('getTaskListIo just list');
+        socketIo.getTasksList(io);
         //console.log("some logs");
         //console.log(tmp);
         // io.emit('getTaskListIo', tmp);
     });
     socket.on('getTaskIo', function(msg) {
         console.log('2 getTaskListIo');
-        exports.getTask(msg);
+        socketIo.getTask(msg, io);
         // console.log("some logs");
         //console.log(tmp);
         // io.emit('getTaskIo', tmp);
@@ -292,7 +81,7 @@ io.on('connect', function(socket) {
     socket.on('addNewTaskIo', function(msg) {
         console.log('addNewTaskIo');
         // console.log(msg);
-        exports.addTask(msg);
+        socketIo.addTask(msg, io);
         // console.log("some logs");
         //console.log(tmp);
         // io.emit('getTaskListIo', tmp);
@@ -300,18 +89,26 @@ io.on('connect', function(socket) {
     socket.on('removeTaskIo', function(msg) {
         console.log('removeTaskIo');
         // console.log(msg);
-        exports.removeTask(msg);
+        socketIo.removeTask(msg, io);
         // console.log("some logs");
         //console.log(tmp);
         // io.emit('getTaskListIo', tmp);
     });
     socket.on('updateTaskIo', function(msg) {
         console.log("updateTaskIo");
-        exports.updateTask(msg);
+        socketIo.updateTask(msg, io);
     })
+    socket.on('getTaskListIo', function(data) {
+        console.log(data);
+    });
+    
 
 });
-io.emit('test', 'test');
+
+exports.testCaseSocket= io;
+
+console.log(exports.testCaseSocket);
+
 
 http.listen(8080, function() {
     console.log(addresses + ':8080');
