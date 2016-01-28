@@ -77,14 +77,14 @@
                     <tbody>
                         <tr class="checkbox" ng-repeat="todo in main.taskList | orderBy:predicate:reverse" ng-show="(todo.radio == 'Completed') == main.Completed || (todo.radio == 'Active') == main.Active">
                             <td>
-                                <input type="checkbox" ng-click="main.removeTaskIo(todo._id)">
+                                <input id="deleting_{{$index}}" type="checkbox" ng-click="main.removeTaskIo(todo._id)">
                             </td>
                             <td> <strong>{{ todo.text }}</strong> </td>
                             <td> {{ todo.priority }}</td>
                             <td> {{ todo.date | date: "yyyy-MM-dd" }}</td>
                             <td> {{ todo.radio }} </td>
                             <td>
-                                <input type="radio" name="seslected-task" ng-click="main.getTaskIo(todo._id)">
+                                <input type="radio" id="options_{{$index}}" name="seslected-task" ng-click="main.getTaskIo(todo._id)">
                             </td>
                         </tr>
                     </tbody>
@@ -112,8 +112,8 @@
                     <textarea ng-model="main.currentElement.description"></textarea>
                 </div>
                 <div id="edit-confirm-buttons">
-                    <button class="btn" type="submit" ng-click="main.updateDataIo(main.currentElement._id)">EDIT</button>
-                    <button class="btn" type="cancel" ng-click="main.clearTask()">CANCEL</button>
+                    <button id="save-edit" class="btn" type="submit" ng-click="main.updateDataIo(main.currentElement._id)">EDIT</button>
+                    <button id="clear-edit" class="btn" type="cancel" ng-click="main.clearTask()">CANCEL</button>
                 </div>
             </form>
             <script src="/socket.io/socket.io.js"></script>

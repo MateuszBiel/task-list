@@ -95,7 +95,7 @@ exports.removeTask = function(req, socket) {
 
 exports.updateTask = function(req, socket) {
     console.log("req");
-    console.log(req.data)
+    console.log(req.data.priority)
     var curdata = req.data;
     model.Todo.update({
         _id: curdata._id
