@@ -2,18 +2,11 @@ var gulp = require('gulp');
 var browserSync = require('browser-sync').create();
 var sass = require('gulp-sass');
 var exec = require('child_process').exec;
-var connect = require('gulp-connect');
 var autoprefixer = require('gulp-autoprefixer');
 
 /**
  * Run test once and exit
  */
-gulp.task('test', function(done) {
-    new Server({
-        configFile: __dirname + '/karma.conf.js',
-        singleRun: false
-    }, done).start();
-});
 
 gulp.task('server', function(cb) {
     exec('mongod --dbpath ./data', function(err, stdout, stderr) {
@@ -36,12 +29,6 @@ gulp.task('sass', function() {
         .pipe(gulp.dest("public/css"));
 });
 
-gulp.task('connect', function() {
-    connect.server({
-        livereload: true,
-        port: 8080
-    });
-});
 
 gulp.task('reload', function() {
     return gulp.src('./public/**/*.*');

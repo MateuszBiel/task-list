@@ -44,9 +44,9 @@
                 </div>
                 <div id="task-status">
                     <input type="radio" ng-model="main.formData.radio" name="active" id="active" value="Active">
-                    <label for="active">ACTIVE</label>
+                    <label for="active" id="active-btn">ACTIVE</label>
                     <input type="radio" ng-model="main.formData.radio" name="active" id="completed" value="Completed">
-                    <label for="completed">COMPLETE</label>
+                    <label for="completed" id="completed-btn">COMPLETE</label>
                 </div>
                 <button id="btn-submit" class="btn" type="submit" ng-click="main.addTaskIo()">+</button>
             </form>

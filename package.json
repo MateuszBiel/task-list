@@ -4,12 +4,12 @@
   "description": "",
   "main": "server.js",
   "scripts": {
-    "dbStart" : "node ./server.js",
-    "serverStart" : "node ./server.js",
+    "dbStart": "node ./server.js",
+    "serverStart": "node ./server.js",
     "testServer": "mocha -R spec ./test/server/*.js",
     "servers": "nodemon ./server.js localhost 8080",
     "test": "mocha -R spec ./test/spec/*.js",
-    "fullstart":"npm run testServer",
+    "fullstart": "npm run testServer",
     "start": "gulp default"
   },
   "author": "",
@@ -46,6 +46,7 @@
     "morgan": "~1.2.2",
     "normalize.css": "^3.0.3",
     "phantomjs": "^1.9.19",
+    "protractor": "^3.0.0",
     "request": "^2.67.0",
     "should": "^8.2.0",
     "socket.io": "^1.4.4",
