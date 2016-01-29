@@ -1,7 +1,5 @@
-var should = require('should'),
-    server = require('../../server.js'),
+var server = require('../../server.js'),
     DB = require('../../server-socketio-CRUD.js'),
-    should = require('should'),
     async = require('async'),
     expect = require('expect.js'),
 

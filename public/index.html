@@ -14,7 +14,7 @@
     <script src="better-dom/dist/better-dom.js"></script>
     <script src="better-i18n-plugin/dist/better-i18n-plugin.js"></script>
     <script src="better-dateinput-polyfill/dist/better-dateinput-polyfill.js"></script>
-    <script src="socket.io/lib/socket.js"></script>
+    <script src="http://localhost:8080/socket.io/socket.io.js"></script>
     
     <link rel="stylesheet" href="normalize.css/normalize.css"></link>
     <link rel="stylesheet" href="css/main.css">
@@ -95,7 +95,6 @@
             <div ng-show="main.isSelect">
                 <h1>Please select task</h1>
             </div>
-            {{main.currentElement}}
             <form action="javascript:void(0)" ng-hide="main.isSelect">
                 <div id="data">
                     <label for="current-task">Task name:</label>
@@ -116,7 +115,6 @@
                     <button id="clear-edit" class="btn" type="cancel" ng-click="main.clearTask()">CANCEL</button>
                 </div>
             </form>
-            <script src="/socket.io/socket.io.js"></script>
         </div>
     </div>
 </body>

@@ -3,8 +3,9 @@
     angular
     .module('taskApp')
     .factory('socket', ['$rootScope', function($rootScope) {
+        var listeningIp='http://localhost:8080';
         var socket = io.connect('http://localhost:8080');
-
+        console.log(socket);
         return {
             on: function(eventName, callback) {
                 function wrapper() {
