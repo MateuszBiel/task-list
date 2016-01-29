@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html ng-app="taskApp">
+
+<head>
+    <!-- META -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- Optimize mobile viewport -->
+    <title>task list</title>
+    <!-- SCROLLS -->
+    <!-- SPELLS -->
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.0-rc.1/angular.min.js"></script>
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+    <script src="better-dom/dist/better-dom.js"></script>
+    <script src="better-i18n-plugin/dist/better-i18n-plugin.js"></script>
+    <script src="better-dateinput-polyfill/dist/better-dateinput-polyfill.js"></script>
+    <script src="http://localhost:8080/socket.io/socket.io.js"></script>
+    
+    <link rel="stylesheet" href="normalize.css/normalize.css"></link>
+    <link rel="stylesheet" href="css/main.css">
+    <!-- load jquery -->
+    <!-- load angular -->
+    <script src="js/core.js"></script>
+    <script src="js/mainController.controller.js"></script>
+    <script src="js/socket-factory.js"></script>
+</head>
+
+<body id="body" ng-controller="mainController as main">
+    <div class="container">
+        <div id="app-name">
+            <h1>TASK MANAGER</h1>
+        </div>
+        <div id="column-left">
+            <form action="javascript:void(0)">
+                <div id="task-basic-information">
+                    <input type="text" required="!main.formData.text" ng-model="main.formData.text" placeholder="task name">
+                </div>
+                <div id="class-status">
+                    <select ng-init="main.formData.priority = main.selectOptions[0]" ng-model="main.formData.priority" ng-options="option.label for option in main.selectOptions">
+                    </select>
+                </div>
+                <div id="task-date">
+                    <input id="date-input" type="date" ng-model="main.formData.date" data-format="yyyy-MM-dd">
+                </div>
+                <div id="task-status">
+                    <input type="radio" ng-model="main.formData.radio" name="active" id="active" value="Active">
+                    <label for="active" id="active-btn">ACTIVE</label>
+                    <input type="radio" ng-model="main.formData.radio" name="active" id="completed" value="Completed">
+                    <label for="completed" id="completed-btn">COMPLETE</label>
+                </div>
+                <button id="btn-submit" class="btn" type="submit" ng-click="main.addTaskIo()">+</button>
+            </form>
+            <div id="task-list">
+                <h3>Current task
+                <div id="dipslay-status">
+                    <input type="checkbox" ng-model="main.Active" id="activeBtn">
+                    <label for="activeBtn">ACTIVE</label>
+                    <input type="checkbox" ng-model="main.Completed" id="completeBtn">
+                    <label for="completeBtn">COMPLETE</label>
+                </div>
+                </h3> 
+                <table id="data-table">
+                    <thead>
+                        <tr>
+                            <td>Del</td>
+                            <td><span ng-click="order('text')">Text <span class="sortorder" ng-show="predicate == 'text'" ng-class="{reverse:reverse}"></span></span>
+                            </td>
+                            <td><span ng-click="order('priority')">Priority <span class="sortorder" ng-show="predicate == 'priority'" ng-class="{reverse:reverse}"></span></span>
+                            </td>
+                            <td><span ng-click="order('date')">Date <span class="sortorder" ng-show="predicate == 'date'" ng-class="{reverse:reverse}"></span></span>
+                            </td>
+                            <td><span ng-click="order('radio')">Status <span class="sortorder" ng-show="predicate == 'radio'" ng-class="{reverse:reverse}"></span></span>
+                            </td>
+                            <td><span>Details</span></td>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr class="checkbox" ng-repeat="todo in main.taskList | orderBy:predicate:reverse" ng-show="(todo.radio == 'Completed') == main.Completed || (todo.radio == 'Active') == main.Active">
+                            <td>
+                                <input id="deleting_{{$index}}" type="checkbox" ng-click="main.removeTaskIo(todo._id)">
+                            </td>
+                            <td> <strong>{{ todo.text }}</strong> </td>
+                            <td> {{ todo.priority }}</td>
+                            <td> {{ todo.date | date: "yyyy-MM-dd" }}</td>
+                            <td> {{ todo.radio }} </td>
+                            <td>
+                                <input type="radio" id="options_{{$index}}" name="seslected-task" ng-click="main.getTaskIo(todo._id)">
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <div id="column-right">
+            <div ng-show="main.isSelect">
+                <h1>Please select task</h1>
+            </div>
+            <form action="javascript:void(0)" ng-hide="main.isSelect">
+                <div id="data">
+                    <label for="current-task">Task name:</label>
+                    <input type="text" id="current-task" ng-model="main.currentElement.text" value="{{main.currentElement.text}}">
+                </div>
+                <div id="class-status">
+                    <select ng-model="main.currentElement.priority" ng-options="option.label for option in main.selectOptions" ng-init="main.currentElement.priority=main.selectOptions[0]">
+                    </select>
+                </div>
+                <div id="task-date">
+                    <input type="date" ng-model="main.currentElement.date">
+                </div>
+                <div id="full-description">
+                    <textarea ng-model="main.currentElement.description"></textarea>
+                </div>
+                <div id="edit-confirm-buttons">
+                    <button id="save-edit" class="btn" type="submit" ng-click="main.updateDataIo(main.currentElement._id)">EDIT</button>
+                    <button id="clear-edit" class="btn" type="cancel" ng-click="main.clearTask()">CANCEL</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</body>
+
+</html>

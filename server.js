@@ -1,128 +1,118 @@
 // server.js
 
-// BASE SETUP
-// =============================================================================
+// set up ========================
+var express = require('express');
+var app = express(); // create our app w/ express
 
-// call the packages we need
-var express = require('express'); // call express
-var app = express(); // define our app using express
-var bodyParser = require('body-parser');
-var mongoose = require('mongoose');
-var Bear = require('./app/models/bear');
-mongoose.connect('mongodb://127.0.0.1/data/db'); // connect to our database
+var morgan = require('morgan'); // log requests to the console (express4)
+var bodyParser = require('body-parser'); // pull information from HTML POST (express4)
+var ip = require('ip');
+var http = require('http').Server(app);
+var io = require('socket.io')(http);
+var path = require('path');
+var Todo = require('./db-model.js');
+require('./server-rest-CRUD.js');
+var socketIo = require('./server-socketio-CRUD.js');
+
+// var methodOverride = require('method-override'); // simulate DELETE and PUT (express4)
+// configuration =================
 
 
-// configure app to use bodyParser()
-// this will let us get the data from a POST
+
+app.use(express.static(__dirname + '/public')); // set the static files location /public/img will be /img for users
+app.use(express.static(__dirname + '/node_modules')); // set the static files location /public/img will be /img for users
+app.use(express.static(__dirname + '/bower_components'));
+
+app.get('/', function(req, res) {
+    res.sendfile(__dirname + '/index.html');
+});
+
+app.use(express.static(path.join(__dirname, 'public')));
+
+app.use('/node_modules', express.static(__dirname + '/node_modules'));
+
+app.use(morgan('dev')); // log every request to the console
 app.use(bodyParser.urlencoded({
-    extended: true
-}));
-app.use(bodyParser.json());
+    'extended': 'true'
+})); // parse application/x-www-form-urlencoded
+app.use(bodyParser.json()); // parse application/json
+app.use(bodyParser.json({
+    type: 'application/vnd.api+json'
+})); // parse application/vnd.api+json as json
+// app.use(methodOverride());
 
-var port = process.env.PORT || 8080; // set our port
+// routes ======================================================================
+// define model =================
 
-// ROUTES FOR OUR API
-// =============================================================================
-var router = express.Router(); // get an instance of the express Router
 
-// middleware to use for all requests
-router.use(function(req, res, next) {
-    // do logging
-    console.log('Something is happening.');
-    next(); // make sure we go to the next routes and don't stop here
+
+
+// api ---------------------------------------------------------------------
+// get all taskList
+
+
+// application -------------------------------------------------------------
+// app.get('*', function(req, res) {
+//     res.sendfile('./public/index.html'); // load the single view file (angular will handle the page changes on the front-end)
+// });
+
+
+// socket API
+
+// ORM functions
+
+var addresses = ip.address();
+
+io.on('connect', function(socket) {
+    socket.on('getTaskListIo', function() {
+        console.log('getTaskListIo just list');
+        socketIo.getTasksList(io);
+        //console.log("some logs");
+        //console.log(tmp);
+        // io.emit('getTaskListIo', tmp);
+    });
+    socket.on('getTaskIo', function(msg) {
+        console.log('2 getTaskListIo');
+        socketIo.getTask(msg, io);
+        // console.log("some logs");
+        //console.log(tmp);
+        // io.emit('getTaskIo', tmp);
+    });
+    socket.on('addNewTaskIo', function(msg) {
+        console.log('addNewTaskIo');
+        // console.log(msg);
+        socketIo.addTask(msg, io);
+        // console.log("some logs");
+        //console.log(tmp);
+        // io.emit('getTaskListIo', tmp);
+    });
+    socket.on('removeTaskIo', function(msg) {
+        console.log('removeTaskIo');
+        // console.log(msg);
+        socketIo.removeTask(msg, io);
+        // console.log("some logs");
+        //console.log(tmp);
+        // io.emit('getTaskListIo', tmp);
+    });
+    socket.on('updateTaskIo', function(msg) {
+        console.log("updateTaskIo");
+        socketIo.updateTask(msg, io);
+    })
+    socket.on('getTaskListIo', function(data) {
+        console.log(data);
+    });
+    
+
 });
 
+exports.testCaseSocket= io;
 
-// test route to make sure everything is working (accessed at GET http://localhost:8080/api)
-router.get('/', function(req, res) {
-    res.json({
-        message: 'hooray! welcome to our api!'
-    });
+console.log(exports.testCaseSocket);
+
+
+http.listen(8080, function() {
+    console.log(addresses + ':8080');
 });
-
-// more routes for our API will happen here
-
-// on routes that end in /bears
-// ----------------------------------------------------
-// ----------------------------------------------------
-router.route('/bears')
-
-// create a bear (accessed at POST http://localhost:8080/api/bears)
-.post(function(req, res) {
-
-        var bear = new Bear(); // create a new instance of the Bear model
-        bear.name = req.body.name; // set the bears name (comes from the request)
-        console.log(bear.name);
-        // save the bear and check for errors
-        bear.save(function(err) {
-            if (err) {
-                console.log(err);
-                res.send(err);
-            }
-
-            res.json({
-                message: 'Bear created!'
-            });
-        });
-
-    })
-    // get all the bears (accessed at GET http://localhost:8080/api/bears)
-    .get(function(req, res) {
-        Bear.find(function(err, bears) {
-            if (err)
-                res.send(err);
-
-            res.json(bears);
-        });
-    });
-router.route('/bears/:bear_id')
-
-// get the bear with that id (accessed at GET http://localhost:8080/api/bears/:bear_id)
-.get(function(req, res) {
-        Bear.findById(req.params.bear_id, function(err, bear) {
-            if (err)
-                res.send(err);
-            res.json(bear);
-        });
-    })
-    // update the bear with this id (accessed at PUT http://localhost:8080/api/bears/:bear_id)
-    .put(function(req, res) {
-
-        // use our bear model to find the bear we want
-        Bear.findById(req.params.bear_id, function(err, bear) {
-
-            if (err)
-                res.send(err);
-
-            bear.name = req.body.name; // update the bears info
-
-            // save the bear
-            bear.save(function(err) {
-                if (err)
-                    res.send(err);
-
-                res.json({
-                    message: 'Bear updated!'
-                });
-            });
-
-        });
-    })
-    .delete(function(req, res) {
-        Bear.remove({
-            _id: req.params.bear_id
-        }, function(err, bear) {
-            if (err)
-                res.send(err);
-
-            res.json({ message: 'Successfully deleted' });
-        });
-    });
-// REGISTER OUR ROUTES -------------------------------
-// all of our routes will be prefixed with /api
-app.use('/api', router);
-
-// START THE SERVER
-// =============================================================================
-app.listen(port);
-console.log('Magic happens on port ' + port);
+// // // listen (start app with node server.js) ======================================
+// app.listen(8080);
+// console.log(addresses + ":8080");

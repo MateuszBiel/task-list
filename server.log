@@ -1,0 +1,83 @@
+10.30.0.68:8080
+10.30.0.68:8080
+10.30.0.68:8080
+10.30.0.68:8080
+events.js:141
+      throw er; // Unhandled 'error' event
+      ^
+
+Error: failed to connect to [localhost:27017]
+    at null.<anonymous> (D:\learning\JS\task-list\node_modules\mongodb\lib\mongodb\connection\server.js:540:25)
+    at emitThree (events.js:97:13)
+    at emit (events.js:175:7)
+    at null.<anonymous> (D:\learning\JS\task-list\node_modules\mongodb\lib\mongodb\connection\connection_pool.js:140:15)
+    at emitTwo (events.js:87:13)
+    at emit (events.js:172:7)
+    at Socket.<anonymous> (D:\learning\JS\task-list\node_modules\mongodb\lib\mongodb\connection\connection.js:478:10)
+    at emitOne (events.js:77:13)
+    at Socket.emit (events.js:169:7)
+    at emitErrorNT (net.js:1253:8)
+10.30.0.68:8080
+events.js:141
+      throw er; // Unhandled 'error' event
+      ^
+
+Error: failed to connect to [localhost:27017]
+    at null.<anonymous> (D:\learning\JS\task-list\node_modules\mongodb\lib\mongodb\connection\server.js:540:25)
+    at emitThree (events.js:97:13)
+    at emit (events.js:175:7)
+    at null.<anonymous> (D:\learning\JS\task-list\node_modules\mongodb\lib\mongodb\connection\connection_pool.js:140:15)
+    at emitTwo (events.js:87:13)
+    at emit (events.js:172:7)
+    at Socket.<anonymous> (D:\learning\JS\task-list\node_modules\mongodb\lib\mongodb\connection\connection.js:478:10)
+    at emitOne (events.js:77:13)
+    at Socket.emit (events.js:169:7)
+    at emitErrorNT (net.js:1253:8)
+10.30.0.68:8080
+events.js:141
+      throw er; // Unhandled 'error' event
+      ^
+
+Error: failed to connect to [localhost:27017]
+    at null.<anonymous> (D:\learning\JS\task-list\node_modules\mongodb\lib\mongodb\connection\server.js:540:25)
+    at emitThree (events.js:97:13)
+    at emit (events.js:175:7)
+    at null.<anonymous> (D:\learning\JS\task-list\node_modules\mongodb\lib\mongodb\connection\connection_pool.js:140:15)
+    at emitTwo (events.js:87:13)
+    at emit (events.js:172:7)
+    at Socket.<anonymous> (D:\learning\JS\task-list\node_modules\mongodb\lib\mongodb\connection\connection.js:478:10)
+    at emitOne (events.js:77:13)
+    at Socket.emit (events.js:169:7)
+    at emitErrorNT (net.js:1253:8)
+10.30.0.68:8080
+events.js:141
+      throw er; // Unhandled 'error' event
+      ^
+
+Error: failed to connect to [localhost:27017]
+    at null.<anonymous> (D:\learning\JS\task-list\node_modules\mongodb\lib\mongodb\connection\server.js:540:25)
+    at emitThree (events.js:97:13)
+    at emit (events.js:175:7)
+    at null.<anonymous> (D:\learning\JS\task-list\node_modules\mongodb\lib\mongodb\connection\connection_pool.js:140:15)
+    at emitTwo (events.js:87:13)
+    at emit (events.js:172:7)
+    at Socket.<anonymous> (D:\learning\JS\task-list\node_modules\mongodb\lib\mongodb\connection\connection.js:478:10)
+    at emitOne (events.js:77:13)
+    at Socket.emit (events.js:169:7)
+    at emitErrorNT (net.js:1253:8)
+10.30.0.68:8080
+events.js:141
+      throw er; // Unhandled 'error' event
+      ^
+
+Error: failed to connect to [localhost:27017]
+    at null.<anonymous> (D:\learning\JS\task-list\node_modules\mongodb\lib\mongodb\connection\server.js:540:25)
+    at emitThree (events.js:97:13)
+    at emit (events.js:175:7)
+    at null.<anonymous> (D:\learning\JS\task-list\node_modules\mongodb\lib\mongodb\connection\connection_pool.js:140:15)
+    at emitTwo (events.js:87:13)
+    at emit (events.js:172:7)
+    at Socket.<anonymous> (D:\learning\JS\task-list\node_modules\mongodb\lib\mongodb\connection\connection.js:478:10)
+    at emitOne (events.js:77:13)
+    at Socket.emit (events.js:169:7)
+    at emitErrorNT (net.js:1253:8)
